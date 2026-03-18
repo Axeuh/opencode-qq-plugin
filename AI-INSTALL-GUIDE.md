@@ -27,6 +27,41 @@
 
 **提问顺序（每次只问一个问题）：**
 
+**问题 0（必须首先询问）：**
+```
+你是否已经安装了 NapCat？
+NapCat 是 QQ 机器人框架，本插件依赖它来收发 QQ 消息。
+```
+
+**如果用户回答"否"且使用 Windows 系统：**
+```
+你想在 WSL (Windows Subsystem for Linux) 中安装 NapCat 吗？
+推荐在 WSL 中安装，因为 NapCat 在 Linux 环境下更稳定。
+```
+
+**如果用户想在 WSL 中安装 NapCat，指导用户：**
+```
+请按以下步骤在 WSL 中安装 NapCat：
+
+1. 安装 WSL（如果没有）：
+   wsl --install -d Ubuntu-22.04
+
+2. 进入 WSL：
+   wsl
+
+3. 安装 NapCat（参考官方文档）：
+   https://napneko.github.io/zh-CN/develop/start
+
+4. 配置 NapCat：
+   - 启用 WebSocket 服务器（默认端口 3002）
+   - 启用 HTTP API 服务器（默认端口 3001）
+   - 设置访问令牌
+
+安装完成后，请告诉我继续配置插件。
+```
+
+**如果用户已安装 NapCat 或安装完成，继续以下问题：**
+
 **问题 1：**
 ```
 机器人的 QQ 号是多少？
