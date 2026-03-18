@@ -4,6 +4,23 @@
 
 ---
 
+## ⚠️ 重要：配置文件位置
+
+**AI 助手必须使用以下路径创建配置文件，不要创建在其他位置！**
+
+| 配置项 | Windows 路径 | Linux/macOS 路径 |
+|--------|-------------|-----------------|
+| OpenCode 主配置 | `C:\Users\<用户名>\.config\opencode\opencode.json` | `~/.config/opencode/opencode.json` |
+| 插件目录 | `C:\Users\<用户名>\.config\opencode\plugins\opencode-qq-plugin\` | `~/.config/opencode/plugins/opencode-qq-plugin/` |
+| 插件配置 | `C:\Users\<用户名>\.config\opencode\plugins\opencode-qq-plugin\config.json` | `~/.config/opencode/plugins/opencode-qq-plugin/config.json` |
+
+**常见错误**：
+- ❌ 不要创建在 `.opencode/` 目录
+- ❌ 不要创建在项目目录下的 `.opencode/`
+- ✅ 必须创建在 `.config/opencode/` 目录
+
+---
+
 ## 给 AI 助手的提示
 
 **重要**：在帮助用户安装插件时，请使用 `question` 工具**一个一个**向用户提问，逐步收集配置信息。
@@ -94,10 +111,24 @@ node --version
 
 ### 步骤 1：创建插件目录
 
+**重要：配置文件位置**
+
+OpenCode 的配置文件位于：
+- **Windows**: `C:\Users\<用户名>\.config\opencode\`
+- **Linux/macOS**: `~/.config/opencode/`
+
+插件目录应放在：
+- **Windows**: `C:\Users\<用户名>\.config\opencode\plugins\opencode-qq-plugin\`
+- **Linux/macOS**: `~/.config/opencode/plugins/opencode-qq-plugin/`
+
 ```bash
-# 创建插件目录（选择合适的位置）
-mkdir -p ~/.opencode/plugins/opencode-qq-plugin
-cd ~/.opencode/plugins/opencode-qq-plugin
+# Windows (PowerShell)
+mkdir -Force "C:\Users\$env:USERNAME\.config\opencode\plugins\opencode-qq-plugin"
+cd "C:\Users\$env:USERNAME\.config\opencode\plugins\opencode-qq-plugin"
+
+# Linux/macOS
+mkdir -p ~/.config/opencode/plugins/opencode-qq-plugin
+cd ~/.config/opencode/plugins/opencode-qq-plugin
 ```
 
 ### 步骤 2：复制插件文件
@@ -190,19 +221,27 @@ cp config.example.json config.json
 
 ### 步骤 5：在 OpenCode 中注册插件
 
-在项目根目录创建或编辑 `.opencode/opencode.json`：
+**配置文件位置**：
+- **Windows**: `C:\Users\<用户名>\.config\opencode\opencode.json`
+- **Linux/macOS**: `~/.config/opencode/opencode.json`
+
+创建或编辑配置文件：
 
 ```json
 {
-  "plugin": ["./path/to/opencode-qq-plugin"]
+  "plugin": ["./plugins/opencode-qq-plugin"]
 }
 ```
 
-全局安装方式：
-```json
-{
-  "plugin": ["~/.opencode/plugins/opencode-qq-plugin"]
-}
+**完整路径示例（Windows）**：
+```
+C:\Users\Administrator\.config\opencode\
+├── opencode.json           # OpenCode 主配置
+└── plugins\
+    └── opencode-qq-plugin\ # 插件目录
+        ├── dist\
+        ├── public\
+        └── config.json     # 插件配置
 ```
 
 ### 步骤 6：启动 OpenCode
@@ -289,7 +328,9 @@ opencode
 ## 故障排除
 
 ### 插件未加载
-1. 检查 `.opencode/opencode.json` 路径是否正确
+1. 检查 OpenCode 配置文件路径是否正确：
+   - **Windows**: `C:\Users\<用户名>\.config\opencode\opencode.json`
+   - **Linux/macOS**: `~/.config/opencode/opencode.json`
 2. 验证 `dist/` 目录是否存在
 3. 检查 OpenCode 版本 >= 0.15.0
 
@@ -316,19 +357,35 @@ opencode
 
 ## 安装后的文件结构
 
+**Windows 示例**：
 ```
-opencode-qq-plugin/
-├── dist/                    # 编译后的 JS
-│   ├── index.js            # 入口文件
-│   └── ...
-├── public/
-│   └── index.html          # Web 界面
-├── config.json             # 用户配置（从模板创建）
-├── config.example.json     # 配置模板
-└── data/                   # 运行时数据（自动创建）
-    ├── sessions.json       # 会话映射
-    ├── users.json          # Web 用户
-    └── downloads/          # 下载的文件
+C:\Users\Administrator\.config\opencode\
+├── opencode.json                        # OpenCode 主配置
+└── plugins\
+    └── opencode-qq-plugin\              # 插件目录
+        ├── dist\                        # 编译后的 JS
+        │   ├── index.js                 # 入口文件
+        │   └── ...
+        ├── public\
+        │   └── index.html               # Web 界面
+        ├── config.json                  # 用户配置
+        ├── config.example.json          # 配置模板
+        └── data\                        # 运行时数据
+            ├── sessions.json            # 会话映射
+            ├── users.json               # Web 用户
+            └── downloads\               # 下载的文件
+```
+
+**Linux/macOS 示例**：
+```
+~/.config/opencode/
+├── opencode.json                        # OpenCode 主配置
+└── plugins/
+    └── opencode-qq-plugin/              # 插件目录
+        ├── dist/
+        ├── public/
+        ├── config.json
+        └── data/
 ```
 
 ---
@@ -337,11 +394,44 @@ opencode-qq-plugin/
 
 复制插件文件后，运行以下脚本：
 
+**Windows (PowerShell)**：
+```powershell
+# opencode-qq-plugin 快速设置脚本
+
+$PluginDir = "$env:USERPROFILE\.config\opencode\plugins\opencode-qq-plugin"
+$ConfigDir = "$env:USERPROFILE\.config\opencode"
+
+# 创建目录
+New-Item -ItemType Directory -Force -Path $PluginDir
+New-Item -ItemType Directory -Force -Path "$PluginDir\data\downloads"
+New-Item -ItemType Directory -Force -Path "$PluginDir\logs"
+
+# 从模板创建配置文件
+if (-not (Test-Path "$PluginDir\config.json")) {
+    Copy-Item "$PluginDir\config.example.json" "$PluginDir\config.json"
+    Write-Host "已创建 config.json - 请编辑填入你的配置"
+}
+
+# 创建 OpenCode 配置
+if (-not (Test-Path "$ConfigDir\opencode.json")) {
+    '{"plugin": ["./plugins/opencode-qq-plugin"]}' | Out-File -FilePath "$ConfigDir\opencode.json" -Encoding utf8
+    Write-Host "已创建 opencode.json"
+}
+
+Write-Host "设置完成！请编辑 $PluginDir\config.json 填入你的配置。"
+```
+
+**Linux/macOS (Bash)**：
 ```bash
 #!/bin/bash
 # opencode-qq-plugin 快速设置脚本
 
-PLUGIN_DIR="${1:-$HOME/.opencode/plugins/opencode-qq-plugin}"
+PLUGIN_DIR="$HOME/.config/opencode/plugins/opencode-qq-plugin"
+CONFIG_DIR="$HOME/.config/opencode"
+
+# 创建目录
+mkdir -p "$PLUGIN_DIR/data/downloads"
+mkdir -p "$PLUGIN_DIR/logs"
 
 # 从模板创建配置文件
 if [ ! -f "$PLUGIN_DIR/config.json" ]; then
@@ -349,15 +439,10 @@ if [ ! -f "$PLUGIN_DIR/config.json" ]; then
     echo "已创建 config.json - 请编辑填入你的配置"
 fi
 
-# 创建数据目录
-mkdir -p "$PLUGIN_DIR/data/downloads"
-mkdir -p "$PLUGIN_DIR/logs"
-
 # 创建 OpenCode 配置
-OPENCODE_CONFIG="$HOME/.opencode/opencode.json"
-if [ ! -f "$OPENCODE_CONFIG" ]; then
-    echo '{"plugin": ["~/.opencode/plugins/opencode-qq-plugin"]}' > "$OPENCODE_CONFIG"
-    echo "已创建 .opencode/opencode.json"
+if [ ! -f "$CONFIG_DIR/opencode.json" ]; then
+    echo '{"plugin": ["./plugins/opencode-qq-plugin"]}' > "$CONFIG_DIR/opencode.json"
+    echo "已创建 opencode.json"
 fi
 
 echo "设置完成！请编辑 $PLUGIN_DIR/config.json 填入你的配置。"
@@ -371,11 +456,15 @@ echo "设置完成！请编辑 $PLUGIN_DIR/config.json 填入你的配置。"
 
 - [ ] 验证 OpenCode 已安装
 - [ ] 验证 NapCat 正在运行
+- [ ] **确认正确的配置目录**：
+  - Windows: `C:\Users\<用户名>\.config\opencode\`
+  - Linux/macOS: `~/.config/opencode/`
+- [ ] 在正确位置创建插件目录
 - [ ] 复制插件文件到目标目录
 - [ ] 从 `config.example.json` 创建 `config.json`
 - [ ] 向用户询问必要的配置信息
 - [ ] 用用户提供的信息更新 `config.json`
-- [ ] 在 `.opencode/opencode.json` 中注册插件
+- [ ] 在正确位置创建 `opencode.json` 注册插件
 - [ ] 启动 OpenCode 并验证 Web 界面
 - [ ] 用 QQ 消息测试
 
