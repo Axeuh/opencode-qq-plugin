@@ -19,6 +19,21 @@
 - ❌ 不要创建在项目目录下的 `.opencode/`
 - ✅ 必须创建在 `.config/opencode/` 目录
 
+**⚠️ 插件路径配置规则（opencode.json）**：
+
+在 `opencode.json` 中注册插件时，**必须使用相对路径**：
+
+| 正确 ✅ | 错误 ❌ |
+|--------|--------|
+| `"./plugins/opencode-qq-plugin"` | `"~/.config/opencode/plugins/opencode-qq-plugin"` |
+| | `"C:\\Users\\...\\plugins\\opencode-qq-plugin"` |
+| | 绝对路径或 `~` 开头的路径 |
+
+**AI 助手必须遵守**：
+- 在 `opencode.json` 的 `plugin` 数组中使用 `"./plugins/opencode-qq-plugin"`（相对路径）
+- 不要使用 `~` 开头的路径
+- 不要使用绝对路径
+
 ---
 
 ## 给 AI 助手的提示
@@ -287,12 +302,34 @@ cp config.example.json config.json
 - **Windows**: `C:\Users\<用户名>\.config\opencode\opencode.json`
 - **Linux/macOS**: `~/.config/opencode/opencode.json`
 
-在 `opencode.json` 的 `plugin` 数组中添加插件：
+**⚠️ 重要：插件路径配置规则**
+
+在 `opencode.json` 的 `plugin` 数组中添加插件时，**必须使用相对路径**：
 
 ```json
 {
   "plugin": [
     "./plugins/opencode-qq-plugin"
+  ]
+}
+```
+
+**❌ 常见错误（不要这样写）**：
+```json
+{
+  "plugin": [
+    "~/.config/opencode/plugins/opencode-qq-plugin",   // ❌ 错误：不要使用 ~ 开头
+    "C:\\Users\\用户名\\.config\\opencode\\plugins\\opencode-qq-plugin",  // ❌ 错误：不要使用绝对路径
+    "/home/用户名/.config/opencode/plugins/opencode-qq-plugin"  // ❌ 错误：不要使用绝对路径
+  ]
+}
+```
+
+**✅ 正确写法**：
+```json
+{
+  "plugin": [
+    "./plugins/opencode-qq-plugin"  // ✅ 正确：使用相对路径
   ]
 }
 ```
