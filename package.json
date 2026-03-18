@@ -48,10 +48,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/opencode-qq-plugin.git"
+    "url": "https://github.com/Axeuh/opencode-qq-plugin.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/opencode-qq-plugin/issues"
+    "url": "https://github.com/Axeuh/opencode-qq-plugin/issues"
   },
-  "homepage": "https://github.com/your-username/opencode-qq-plugin#readme"
+  "homepage": "https://github.com/Axeuh/opencode-qq-plugin#readme"
 }

@@ -71,7 +71,7 @@ npm install opencode-qq-plugin
 
 ```bash
 # 克隆仓库
-git clone https://github.com/your-username/opencode-qq-plugin.git
+git clone https://github.com/Axeuh/opencode-qq-plugin.git
 
 # 安装依赖并构建
 cd opencode-qq-plugin
@@ -97,20 +97,20 @@ npm run build
 ```json
 {
   "bot": {
-    "name": "Axeuh_home",
-    "qqId": "3938121220",
-    "adminQq": "2176284372"
+    "name": "YourBotName",
+    "qqId": "YOUR_BOT_QQ_ID",
+    "adminQq": "YOUR_ADMIN_QQ_ID"
   },
   "napcat": {
     "websocket": {
       "url": "ws://localhost:3002",
-      "accessToken": "your-token",
+      "accessToken": "YOUR_NAPCAT_TOKEN",
       "heartbeatInterval": 30000,
       "reconnectInterval": 5000
     },
     "httpApi": {
       "baseUrl": "http://localhost:3001",
-      "accessToken": "your-token",
+      "accessToken": "YOUR_HTTP_TOKEN",
       "timeout": 30,
       "enabled": true
     }
@@ -126,8 +126,8 @@ npm run build
     "supportedModels": ["alibaba-coding-plan-cn/glm-5", ...]
   },
   "whitelist": {
-    "qqUsers": [2176284372],
-    "groups": [813729523]
+    "qqUsers": [123456789],
+    "groups": [987654321]
   },
   "session": {
     "storageType": "file",
@@ -306,3 +306,21 @@ npm run build
 ## 许可证
 
 MIT
+
+---
+
+## AI 辅助安装
+
+如果你是 AI 助手，正在帮助用户安装此插件，请阅读 **[AI-INSTALL-GUIDE.md](./AI-INSTALL-GUIDE.md)** 获取详细的安装配置指南。
+
+该文档包含：
+- 完整的安装步骤
+- 配置项详细说明
+- 常见问题排查
+- AI 助手检查清单
+
+**给 AI 的提示**：
+```
+请阅读 https://github.com/Axeuh/opencode-qq-plugin/blob/main/AI-INSTALL-GUIDE.md
+按照文档中的步骤帮助用户安装和配置 opencode-qq-plugin 插件。
+```
