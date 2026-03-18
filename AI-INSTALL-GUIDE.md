@@ -6,44 +6,60 @@
 
 ## 给 AI 助手的提示
 
-**重要**：在帮助用户安装插件时，请使用 `question` 工具**依次**向用户提问，逐步收集配置信息。
+**重要**：在帮助用户安装插件时，请使用 `question` 工具**一个一个**向用户提问，逐步收集配置信息。
 
-**提问顺序（使用 question 工具）：**
+**提问顺序（每次只问一个问题）：**
 
-**问题 1 - 基本信息：**
+**问题 1：**
 ```
-请提供以下基本信息：
-1. 机器人的 QQ 号是多少？
-2. 管理员的 QQ 号是多少？
+机器人的 QQ 号是多少？
 ```
 
-**问题 2 - NapCat WebSocket：**
+**问题 2：**
 ```
-请提供 NapCat WebSocket 服务配置：
-1. WebSocket 服务地址和端口是什么？（例如：ws://localhost:3002）
-2. WebSocket 访问令牌是什么？
+管理员的 QQ 号是多少？
 ```
 
-**问题 3 - NapCat HTTP API：**
+**问题 3：**
 ```
-请提供 NapCat HTTP API 服务配置：
-1. HTTP API 服务地址和端口是什么？（例如：http://localhost:3001）
-2. HTTP API 访问令牌是什么？
-```
-
-**问题 4 - 白名单：**
-```
-请提供白名单配置：
-1. 允许使用此插件的 QQ 号列表（多个用逗号分隔）
-2. 允许使用此插件的群号列表（可选，多个用逗号分隔）
+NapCat WebSocket 服务地址和端口是什么？
+例如：ws://localhost:3002
 ```
 
-**问题 5 - 文件下载目录：**
+**问题 4：**
 ```
-请提供 NapCat 文件下载目录：
-NapCat 接收的文件默认保存在哪里？
-例如：\\\\wsl.localhost\\Ubuntu-22.04\\root\\.config\\QQ\\NapCat\\temp
-（如果不确定，可以稍后在 config.json 中修改 fileHandling.napcatTempDir 字段）
+NapCat WebSocket 访问令牌是什么？
+```
+
+**问题 5：**
+```
+NapCat HTTP API 服务地址和端口是什么？
+例如：http://localhost:3001
+```
+
+**问题 6：**
+```
+NapCat HTTP API 访问令牌是什么？
+```
+
+**问题 7：**
+```
+允许使用此插件的 QQ 号列表是什么？
+多个 QQ 号用逗号分隔
+```
+
+**问题 8：**
+```
+允许使用此插件的群号列表是什么？
+多个群号用逗号分隔，如不需要可跳过
+```
+
+**问题 9：**
+```
+NapCat 临时文件目录在哪里？
+这是 NapCat 接收文件的保存位置。
+例如：\\wsl.localhost\Ubuntu-22.04\root\.config\QQ\NapCat\temp
+如不确定可跳过，稍后在 config.json 中修改。
 ```
 
 ---
