@@ -38,6 +38,14 @@
 2. 允许使用此插件的群号列表（可选，多个用逗号分隔）
 ```
 
+**问题 5 - 文件下载目录：**
+```
+请提供 NapCat 文件下载目录：
+NapCat 接收的文件默认保存在哪里？
+例如：\\\\wsl.localhost\\Ubuntu-22.04\\root\\.config\\QQ\\NapCat\\temp
+（如果不确定，可以稍后在 config.json 中修改 fileHandling.napcatTempDir 字段）
+```
+
 ---
 
 ## 概述
@@ -120,6 +128,9 @@ cp config.example.json config.json
   "whitelist": {
     "qqUsers": [允许使用的QQ号列表],
     "groups": [允许使用的群号列表]
+  },
+  "fileHandling": {
+    "napcatTempDir": "NAPCAT临时文件目录"
   }
 }
 ```
@@ -159,6 +170,7 @@ cp config.example.json config.json
 | `napcat.httpApi.accessToken` | NapCat HTTP API 访问令牌 | "def456uvw" |
 | `whitelist.qqUsers` | 允许使用的 QQ 号 | [123456789, 987654321] |
 | `whitelist.groups` | 允许使用的群号 | [813729523] |
+| `fileHandling.napcatTempDir` | NapCat 临时文件目录 | "\\\\wsl.localhost\\Ubuntu-22.04\\root\\.config\\QQ\\NapCat\\temp" |
 
 ### 步骤 5：在 OpenCode 中注册插件
 
