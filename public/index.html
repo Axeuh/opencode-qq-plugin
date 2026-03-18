@@ -2429,43 +2429,79 @@ ${escapeHtml(String(output).replace(/Exit Code:\s*\d+.*$/s, '').trim().substring
                         <div class="diff-container" style="padding: 10px; white-space: pre-wrap; word-break: break-word; max-height: 200px; overflow-y: auto;">${escapeHtml(content.substring(0, 1000))}${content.length > 1000 ? '\n...(内容过长已截断)' : ''}</div>
                     </div>
                 `;
-            } else if (toolName.includes('skill_mcp')) {
-                // MCP工具调用
-                const mcpName = input.mcp_name || '';
-                const toolInput = input.tool_name || '';
-                const args = input.arguments || {};
+            } else if (toolName.startsWith('qq_') || toolName.includes('skill_mcp')) {
+                // QQ工具或MCP工具调用
+                const isQQTool = toolName.startsWith('qq_');
+                let mcpName = '';
+                let toolInput = '';
+                let args = {};
                 
-                // 只有qq-mcp才显示QQ样式
+                if (toolName.includes('skill_mcp')) {
+                    mcpName = input.mcp_name || '';
+                    toolInput = input.tool_name || '';
+                    args = input.arguments || {};
+                } else {
+                    // 插件集成的QQ工具
+                    args = input;
+                }
+                
+                // 检测是否是QQ相关工具
                 const isQQMcp = mcpName === 'qq-mcp' || mcpName.includes('qq');
+                const isQQRelated = isQQTool || isQQMcp;
                 
-                if (isQQMcp) {
-                    // QQ MCP工具：特殊样式
+                if (isQQRelated) {
+                    // QQ工具：特殊样式
                     card.classList.add('qq-card', 'expanded');
+                    
+                    // 获取工具的友好名称
+                    const qqToolNames = {
+                        'qq_send_message': '发送消息',
+                        'qq_get_friends': '获取好友列表',
+                        'qq_search_friend': '搜索好友',
+                        'qq_send_file': '发送文件',
+                        'qq_get_file': '获取文件',
+                        'qq_get_login_info': '获取登录信息',
+                        'qq_send_poke': '发送戳一戳',
+                        'qq_get_group_history': '获取群历史'
+                    };
+                    
+                    const toolDisplayName = qqToolNames[toolName] || toolName;
                     
                     // 判断是私聊还是群聊
                     let chatType = '';
                     let chatTarget = '';
-                    if (args.params) {
-                        if (args.params.message_type === 'private') {
-                            chatType = '私聊';
-                            chatTarget = args.params.target_id || '';
-                        } else if (args.params.message_type === 'group') {
-                            chatType = '群聊';
-                            chatTarget = args.params.target_id || '';
-                        }
+                    if (args.messageType === 'private') {
+                        chatType = '私聊';
+                        chatTarget = args.targetId || '';
+                    } else if (args.messageType === 'group') {
+                        chatType = '群聊';
+                        chatTarget = args.targetId || '';
                     }
                     
-                    const message = args.params?.message || '';
+                    // 获取消息内容
+                    const message = args.message || '';
+                    const groupId = args.groupId || '';
+                    const userId = args.userId || '';
+                    
+                    // 构建标题
+                    let title = toolDisplayName;
+                    if (chatType && chatTarget) {
+                        title = `${toolDisplayName} - ${chatType} ${chatTarget}`;
+                    } else if (groupId) {
+                        title = `${toolDisplayName} - 群${groupId}`;
+                    } else if (userId) {
+                        title = `${toolDisplayName} - 用户${userId}`;
+                    }
                     
                     card.innerHTML = `
                         <div class="tool-header" onclick="toggleTool(this)">
-                            <div><i class="fab fa-qq qq-icon tool-icon"></i>${chatType ? `${chatType} ${chatTarget}` : 'QQ MCP'}</div>
+                            <div><i class="fab fa-qq qq-icon tool-icon"></i>${escapeHtml(title)}</div>
                             <i class="fas fa-chevron-down tool-toggle-icon"></i>
                         </div>
                         <div class="tool-body">
-                            <p style="font-size: 13px; margin-bottom: 6px;"><strong>[${mcpName}: ${toolInput}]</strong></p>
-                            ${message ? `<div style="background: #f8fbff; padding: 10px; border-radius: 6px; border: 1px solid #e1e8f0; font-size: 13px;">${escapeHtml(message.substring(0, 500))}${message.length > 500 ? '...' : ''}</div>` : ''}
-                            ${output ? `<p style="margin-top: 8px; font-size: 12px; color: #28a745;"><i class="fas fa-check-circle"></i> 执行成功</p>` : ''}
+                            ${message ? `<div style="background: #f8fbff; padding: 10px; border-radius: 6px; border: 1px solid #e1e8f0; font-size: 13px; margin-bottom: 8px;">${escapeHtml(message.substring(0, 500))}${message.length > 500 ? '...' : ''}</div>` : ''}
+                            ${output ? `<p style="font-size: 12px; color: #28a745;"><i class="fas fa-check-circle"></i> 执行成功</p>` : ''}
+                            ${output ? `<details style="margin-top: 8px;"><summary style="cursor: pointer; font-size: 12px; color: #666;">查看详细结果</summary><pre style="margin: 8px 0 0 0; white-space: pre-wrap; font-size: 11px; color: #666; background: #f8fafc; padding: 8px; border-radius: 6px; max-height: 200px; overflow-y: auto;">${escapeHtml(String(output).substring(0, 2000))}${String(output).length > 2000 ? '\n...' : ''}</pre></details>` : ''}
                         </div>
                     `;
                 } else {
@@ -2563,11 +2599,17 @@ ${escapeHtml(String(output).replace(/Exit Code:\s*\d+.*$/s, '').trim().substring
             const toolName = part.name || part.tool_name || 'tool';
             const toolInput = part.input || part.arguments || {};
             
+            // 检测是否是QQ工具
+            const isQQTool = toolName.startsWith('qq_');
+            
             // 根据工具类型选择图标
             let iconClass = 'fa-cog';
             let iconColor = '';
             
-            if (toolName.includes('read') || toolName.includes('file')) {
+            if (isQQTool) {
+                iconClass = 'fa-qq';
+                card.classList.add('qq-card');
+            } else if (toolName.includes('read') || toolName.includes('file')) {
                 iconClass = 'fa-file-code';
             } else if (toolName.includes('edit') || toolName.includes('write')) {
                 iconClass = 'fa-edit';
@@ -2575,15 +2617,26 @@ ${escapeHtml(String(output).replace(/Exit Code:\s*\d+.*$/s, '').trim().substring
             } else if (toolName.includes('bash') || toolName.includes('terminal')) {
                 iconClass = 'fa-terminal';
                 iconColor = 'color:#333;';
-            } else if (toolName.includes('qq') || toolName.includes('message')) {
-                iconClass = 'fa-qq';
-                iconClass = 'fab fa-qq';
-                card.classList.add('qq-card');
             }
+            
+            // QQ工具的友好名称
+            const qqToolNames = {
+                'qq_send_message': '发送消息',
+                'qq_get_friends': '获取好友列表',
+                'qq_search_friend': '搜索好友',
+                'qq_send_file': '发送文件',
+                'qq_get_file': '获取文件',
+                'qq_get_login_info': '获取登录信息',
+                'qq_send_poke': '发送戳一戳',
+                'qq_get_group_history': '获取群历史'
+            };
+            
+            const displayName = isQQTool ? (qqToolNames[toolName] || toolName) : toolName;
+            const iconHtml = isQQTool ? `<i class="fab fa-qq qq-icon tool-icon"></i>` : `<i class="fas ${iconClass} tool-icon" style="${iconColor}"></i>`;
             
             card.innerHTML = `
                 <div class="tool-header" onclick="toggleTool(this)">
-                    <div><i class="fas ${iconClass} tool-icon" style="${iconColor}"></i>${escapeHtml(toolName)}</div>
+                    <div>${iconHtml}${escapeHtml(displayName)}</div>
                     <i class="fas fa-chevron-down tool-toggle-icon"></i>
                 </div>
                 <div class="tool-body">
@@ -2601,15 +2654,45 @@ ${escapeHtml(String(output).replace(/Exit Code:\s*\d+.*$/s, '').trim().substring
             const toolName = part.name || part.tool_name || 'result';
             const result = part.content || part.result || '';
             
-            card.innerHTML = `
-                <div class="tool-header" onclick="toggleTool(this)">
-                    <div><i class="fas fa-check-circle tool-icon" style="color:#28a745;"></i>${escapeHtml(toolName)} - 结果</div>
-                    <i class="fas fa-chevron-down tool-toggle-icon"></i>
-                </div>
-                <div class="tool-body">
-                    <div class="bash-cmd">${escapeHtml(String(result).substring(0, 1000))}${String(result).length > 1000 ? '...' : ''}</div>
-                </div>
-            `;
+            // 检测是否是QQ工具
+            const isQQTool = toolName.startsWith('qq_');
+            
+            // QQ工具的友好名称
+            const qqToolNames = {
+                'qq_send_message': '发送消息',
+                'qq_get_friends': '获取好友列表',
+                'qq_search_friend': '搜索好友',
+                'qq_send_file': '发送文件',
+                'qq_get_file': '获取文件',
+                'qq_get_login_info': '获取登录信息',
+                'qq_send_poke': '发送戳一戳',
+                'qq_get_group_history': '获取群历史'
+            };
+            
+            const displayName = isQQTool ? (qqToolNames[toolName] || toolName) : toolName;
+            
+            if (isQQTool) {
+                card.classList.add('qq-card');
+                card.innerHTML = `
+                    <div class="tool-header" onclick="toggleTool(this)">
+                        <div><i class="fab fa-qq qq-icon tool-icon"></i>${escapeHtml(displayName)} - 结果</div>
+                        <i class="fas fa-chevron-down tool-toggle-icon"></i>
+                    </div>
+                    <div class="tool-body">
+                        <div class="bash-cmd">${escapeHtml(String(result).substring(0, 1000))}${String(result).length > 1000 ? '...' : ''}</div>
+                    </div>
+                `;
+            } else {
+                card.innerHTML = `
+                    <div class="tool-header" onclick="toggleTool(this)">
+                        <div><i class="fas fa-check-circle tool-icon" style="color:#28a745;"></i>${escapeHtml(toolName)} - 结果</div>
+                        <i class="fas fa-chevron-down tool-toggle-icon"></i>
+                    </div>
+                    <div class="tool-body">
+                        <div class="bash-cmd">${escapeHtml(String(result).substring(0, 1000))}${String(result).length > 1000 ? '...' : ''}</div>
+                    </div>
+                `;
+            }
             
             return card;
         }
