@@ -14,10 +14,12 @@
 
 1. 机器人的 QQ 号是多少？
 2. 管理员的 QQ 号是多少？
-3. NapCat WebSocket 访问令牌是什么？
-4. NapCat HTTP API 访问令牌是什么？
-5. 允许使用此插件的 QQ 号列表（白名单用户）
-6. 允许使用此插件的群号列表（可选）
+3. NapCat WebSocket 服务的地址和端口是什么？（例如：ws://localhost:3002）
+4. NapCat WebSocket 访问令牌是什么？
+5. NapCat HTTP API 服务的地址和端口是什么？（例如：http://localhost:3001）
+6. NapCat HTTP API 访问令牌是什么？
+7. 允许使用此插件的 QQ 号列表（白名单用户）
+8. 允许使用此插件的群号列表（可选）
 
 请提供以上信息，我将为你完成配置。
 ```
@@ -92,11 +94,11 @@ cp config.example.json config.json
   },
   "napcat": {
     "websocket": {
-      "url": "ws://localhost:3002",
+      "url": "WEBSOCKET地址",
       "accessToken": "WEBSOCKET访问令牌"
     },
     "httpApi": {
-      "baseUrl": "http://localhost:3001",
+      "baseUrl": "HTTP_API地址",
       "accessToken": "HTTP访问令牌",
       "enabled": true
     }
@@ -120,14 +122,14 @@ cp config.example.json config.json
   "http": {
     "enable": true,
     "host": "0.0.0.0",
-    "port": 3001,
+    "port": 你的HTTP端口,
     "secret": "你的HTTP访问令牌"
   },
   "ws": {
     "enable": true,
     "host": "0.0.0.0",
-    "port": 3002,
-    "secret": "你的WEBSOCKET访问令牌"
+    "port": 你的WebSocket端口,
+    "secret": "你的WebSocket访问令牌"
   }
 }
 ```
@@ -137,7 +139,9 @@ cp config.example.json config.json
 |------|------|------|
 | `bot.qqId` | 机器人 QQ 号 | "123456789" |
 | `bot.adminQq` | 管理员 QQ 号 | "987654321" |
+| `napcat.websocket.url` | NapCat WebSocket 地址 | "ws://localhost:3002" |
 | `napcat.websocket.accessToken` | NapCat WebSocket 访问令牌 | "abc123xyz" |
+| `napcat.httpApi.baseUrl` | NapCat HTTP API 地址 | "http://localhost:3001" |
 | `napcat.httpApi.accessToken` | NapCat HTTP API 访问令牌 | "def456uvw" |
 | `whitelist.qqUsers` | 允许使用的 QQ 号 | [123456789, 987654321] |
 | `whitelist.groups` | 允许使用的群号 | [813729523] |
