@@ -212,8 +212,8 @@ export class NapCatClient extends EventEmitter {
   /**
    * 获取群历史消息
    */
-  async getGroupMsgHistory(groupId: number, count: number = 20): Promise<any[]> {
-    return this.sendApi<any[]>('get_group_msg_history', {
+  async getGroupMsgHistory(groupId: number, count: number = 20): Promise<any> {
+    return this.sendApi<any>('get_group_msg_history', {
       group_id: groupId,
       count
     });

@@ -13,8 +13,18 @@ export const qqGetGroupHistoryTool = tool({
     async execute(args, context) {
         const napcat = getNapCatClient();
         try {
-            const messages = await napcat.getGroupMsgHistory(parseInt(args.groupId), args.count);
-            const result = messages.map(m => ({
+            const result = await napcat.getGroupMsgHistory(parseInt(args.groupId), args.count);
+            // 打印原始结果用于调试
+            console.log('[DEBUG] getGroupMsgHistory raw result:', JSON.stringify(result, null, 2));
+            // NapCat API 可能返回 { messages: [...] } 或直接返回数组
+            let messages = [];
+            if (Array.isArray(result)) {
+                messages = result;
+            }
+            else if (result && Array.isArray(result.messages)) {
+                messages = result.messages;
+            }
+            const formattedMessages = messages.map((m) => ({
                 time: m.time,
                 userId: m.user_id,
                 nickname: m.sender?.nickname || '',
@@ -24,8 +34,8 @@ export const qqGetGroupHistoryTool = tool({
             return JSON.stringify({
                 success: true,
                 groupId: args.groupId,
-                count: result.length,
-                messages: result,
+                count: formattedMessages.length,
+                messages: formattedMessages,
             }, null, 2);
         }
         catch (error) {

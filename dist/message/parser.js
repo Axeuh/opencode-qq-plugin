@@ -136,6 +136,31 @@ export function extractFileInfo(rawMessage) {
     return fileInfoList;
 }
 /**
+ * 检查消息是否 @ 了指定用户
+ * 同时支持 OneBot 数组格式和 CQ 码格式
+ */
+export function isBotMentioned(message, botId) {
+    // 格式1: OneBot 消息段数组
+    if (message.message && Array.isArray(message.message)) {
+        for (const segment of message.message) {
+            if (segment && segment.type === 'at') {
+                const atQq = String(segment.data?.qq || '');
+                if (atQq === botId) {
+                    return true;
+                }
+            }
+        }
+    }
+    // 格式2: CQ 码格式
+    if (message.raw_message) {
+        const atPattern = new RegExp(`\\[CQ:at,qq=${botId}\\]`);
+        if (atPattern.test(message.raw_message)) {
+            return true;
+        }
+    }
+    return false;
+}
+/**
  * 从消息中提取引用消息 ID
  * 支持 OneBot 消息段格式和 CQ 码格式
  */
@@ -181,6 +206,7 @@ export function extractPlainText(rawMessage) {
 export function parseMessageSegments(segments) {
     const result = {
         text: '',
+        textWithoutAt: '',
         atList: [],
         fileInfo: [],
         replyId: null,
@@ -189,15 +215,18 @@ export function parseMessageSegments(segments) {
         return result;
     }
     const textParts = [];
+    const textWithoutAtParts = [];
     for (const segment of segments) {
         const { type, data } = segment;
         switch (type) {
             case 'text':
                 textParts.push(data.text || '');
+                textWithoutAtParts.push(data.text || '');
                 break;
             case 'at':
                 result.atList.push(data.qq || '');
                 textParts.push(`@${data.qq}`);
+                // textWithoutAt 不包含 @
                 break;
             case 'reply':
                 result.replyId = data.id || null;
@@ -257,6 +286,7 @@ export function parseMessageSegments(segments) {
                 break;
             case 'face':
                 textParts.push(`[表情:${data.id || ''}]`);
+                textWithoutAtParts.push(`[表情:${data.id || ''}]`);
                 break;
             case 'share':
                 result.fileInfo.push({
@@ -272,6 +302,7 @@ export function parseMessageSegments(segments) {
         }
     }
     result.text = textParts.join('');
+    result.textWithoutAt = textWithoutAtParts.join('').trim();
     return result;
 }
 /**

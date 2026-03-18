@@ -174,6 +174,34 @@ export function extractFileInfo(rawMessage: string): FileInfo[] {
 }
 
 /**
+ * 检查消息是否 @ 了指定用户
+ * 同时支持 OneBot 数组格式和 CQ 码格式
+ */
+export function isBotMentioned(message: any, botId: string): boolean {
+  // 格式1: OneBot 消息段数组
+  if (message.message && Array.isArray(message.message)) {
+    for (const segment of message.message) {
+      if (segment && segment.type === 'at') {
+        const atQq = String(segment.data?.qq || '');
+        if (atQq === botId) {
+          return true;
+        }
+      }
+    }
+  }
+  
+  // 格式2: CQ 码格式
+  if (message.raw_message) {
+    const atPattern = new RegExp(`\\[CQ:at,qq=${botId}\\]`);
+    if (atPattern.test(message.raw_message)) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+/**
  * 从消息中提取引用消息 ID
  * 支持 OneBot 消息段格式和 CQ 码格式
  */
@@ -224,12 +252,14 @@ export function extractPlainText(rawMessage: string): string {
  */
 export function parseMessageSegments(segments: MessageSegmentData[]): {
   text: string;
+  textWithoutAt: string;  // 不包含 @ 的纯文本
   atList: string[];
   fileInfo: FileInfo[];
   replyId: string | null;
 } {
   const result = {
     text: '',
+    textWithoutAt: '',
     atList: [] as string[],
     fileInfo: [] as FileInfo[],
     replyId: null as string | null,
@@ -240,6 +270,7 @@ export function parseMessageSegments(segments: MessageSegmentData[]): {
   }
   
   const textParts: string[] = [];
+  const textWithoutAtParts: string[] = [];
   
   for (const segment of segments) {
     const { type, data } = segment;
@@ -247,11 +278,13 @@ export function parseMessageSegments(segments: MessageSegmentData[]): {
     switch (type) {
       case 'text':
         textParts.push(data.text || '');
+        textWithoutAtParts.push(data.text || '');
         break;
         
       case 'at':
         result.atList.push(data.qq || '');
         textParts.push(`@${data.qq}`);
+        // textWithoutAt 不包含 @
         break;
         
       case 'reply':
@@ -318,6 +351,7 @@ export function parseMessageSegments(segments: MessageSegmentData[]): {
         
       case 'face':
         textParts.push(`[表情:${data.id || ''}]`);
+        textWithoutAtParts.push(`[表情:${data.id || ''}]`);
         break;
         
       case 'share':
@@ -335,6 +369,7 @@ export function parseMessageSegments(segments: MessageSegmentData[]): {
   }
   
   result.text = textParts.join('');
+  result.textWithoutAt = textWithoutAtParts.join('').trim();
   return result;
 }
 

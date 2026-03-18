@@ -58,7 +58,7 @@ export declare class NapCatClient extends EventEmitter {
     /**
      * 获取群历史消息
      */
-    getGroupMsgHistory(groupId: number, count?: number): Promise<any[]>;
+    getGroupMsgHistory(groupId: number, count?: number): Promise<any>;
     /**
      * 获取登录账号信息
      */

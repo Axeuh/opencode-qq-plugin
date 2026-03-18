@@ -32,6 +32,11 @@ export declare function parseCQCode(cqCode: string): ParsedCQCode;
  */
 export declare function extractFileInfo(rawMessage: string): FileInfo[];
 /**
+ * 检查消息是否 @ 了指定用户
+ * 同时支持 OneBot 数组格式和 CQ 码格式
+ */
+export declare function isBotMentioned(message: any, botId: string): boolean;
+/**
  * 从消息中提取引用消息 ID
  * 支持 OneBot 消息段格式和 CQ 码格式
  */
@@ -45,6 +50,7 @@ export declare function extractPlainText(rawMessage: string): string;
  */
 export declare function parseMessageSegments(segments: MessageSegmentData[]): {
     text: string;
+    textWithoutAt: string;
     atList: string[];
     fileInfo: FileInfo[];
     replyId: string | null;

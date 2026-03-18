@@ -22,8 +22,9 @@ import { createLogServer, interceptConsole } from './log-server';
 import { createApiServer, setClient } from './api-server';
 import { createWebServer, setOpenCodeClient, setConfig as setWebConfig, broadcastOpenCodeEvent } from './web-server';
 // 消息处理模块
-import { extractFileInfo, extractPlainText, extractQuotedMessageId, parseMessageSegments, buildMessageContext } from './message/parser';
+import { extractFileInfo, extractPlainText, extractQuotedMessageId, parseMessageSegments, buildMessageContext, isBotMentioned } from './message/parser';
 import { getFileHandler } from './message/file-handler';
+import { processReplyMessage, formatReplyContent } from './message/reply-handler';
 // 启动日志服务器并拦截 console
 interceptConsole();
 const logServer = createLogServer(4099);
@@ -176,63 +177,50 @@ export const QQPlugin = async (ctx) => {
             if (!isGroupWhitelisted(groupId) || !isUserWhitelisted(userId)) {
                 return;
             }
-            // 检查是否 @机器人
+            // 检查是否 @机器人（同时支持 OneBot 数组格式和 CQ 码格式）
             const botId = botConfig.qqId;
-            const atPattern = new RegExp(`\\[CQ:at,qq=${botId}\\]`);
-            if (!atPattern.test(rawMessage)) {
+            if (!isBotMentioned(msg, botId)) {
                 return;
             }
         }
         // ==================== 消息段解析 ====================
         let plainText = '';
+        let commandText = ''; // 用于命令检测（不包含 @）
         let fileInfo = [];
         let replyContent = null;
         // 解析消息段（支持 OneBot 数组格式）
         if (msg.message && Array.isArray(msg.message)) {
             const parsed = parseMessageSegments(msg.message);
             plainText = parsed.text;
+            commandText = parsed.textWithoutAt; // 不包含 @ 的文本
             fileInfo = parsed.fileInfo;
             // 处理引用消息
             if (parsed.replyId) {
-                try {
-                    const replyMsg = await napcat.getMsg(parsed.replyId);
-                    if (replyMsg && replyMsg.message) {
-                        const replyText = typeof replyMsg.message === 'string'
-                            ? replyMsg.message
-                            : Array.isArray(replyMsg.message)
-                                ? replyMsg.message.map((s) => s.data?.text || '').join('')
-                                : '';
-                        const replySender = replyMsg.sender?.nickname || '未知用户';
-                        replyContent = `${replySender}: ${extractPlainText(replyText)}`;
-                    }
+                const replyResult = await processReplyMessage(parsed.replyId, userId, groupId, directory);
+                if (replyResult) {
+                    replyContent = formatReplyContent(replyResult);
                 }
-                catch (e) { }
             }
         }
         else {
             // CQ 码格式
             plainText = extractPlainText(rawMessage);
+            commandText = plainText; // CQ 码格式已经移除了 @
             fileInfo = extractFileInfo(rawMessage);
             // 处理引用消息（CQ 码格式）
             const replyId = extractQuotedMessageId(msg);
             if (replyId) {
-                try {
-                    const replyMsg = await napcat.getMsg(replyId);
-                    if (replyMsg && replyMsg.message) {
-                        const replyText = typeof replyMsg.message === 'string'
-                            ? replyMsg.message
-                            : '';
-                        const replySender = replyMsg.sender?.nickname || '未知用户';
-                        replyContent = `${replySender}: ${extractPlainText(replyText)}`;
-                    }
+                const replyResult = await processReplyMessage(replyId, userId, groupId, directory);
+                if (replyResult) {
+                    replyContent = formatReplyContent(replyResult);
                 }
-                catch (e) { }
             }
         }
         const senderName = msg.sender?.nickname || `QQ用户_${userId}`;
-        // 检查是否为命令
-        if (plainText.startsWith(COMMAND_PREFIX)) {
-            await handleCommand(msg.message_type, groupId, userId, plainText);
+        // 检查是否为命令（使用不包含 @ 的文本）
+        const trimmedCommand = commandText.trim();
+        if (trimmedCommand.startsWith(COMMAND_PREFIX)) {
+            await handleCommand(msg.message_type, groupId, userId, trimmedCommand);
             return;
         }
         // ==================== 处理文件 ====================
