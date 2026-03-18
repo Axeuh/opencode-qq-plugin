@@ -1,0 +1,57 @@
+{
+  "name": "opencode-qq-plugin",
+  "version": "1.0.0",
+  "description": "OpenCode QQ Robot Plugin - QQ消息与OpenCode AI集成",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "public",
+    "config.example.json",
+    "AI-INSTALL-GUIDE.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=0.15.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^20.0.0",
+    "@types/uuid": "^9.0.7",
+    "@types/ws": "^8.5.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "multer": "^2.1.1",
+    "node-fetch": "^3.3.2",
+    "uuid": "^9.0.0",
+    "ws": "^8.14.0"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "qq",
+    "qq-bot",
+    "napcat"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/opencode-qq-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/opencode-qq-plugin/issues"
+  },
+  "homepage": "https://github.com/your-username/opencode-qq-plugin#readme"
+}

@@ -1,0 +1,82 @@
+{
+  "bot": {
+    "name": "YourBotName",
+    "qqId": "YOUR_BOT_QQ_ID",
+    "adminQq": "YOUR_ADMIN_QQ_ID"
+  },
+  "napcat": {
+    "websocket": {
+      "url": "ws://localhost:3002",
+      "accessToken": "YOUR_NAPCAT_ACCESS_TOKEN",
+      "heartbeatInterval": 30000,
+      "reconnectInterval": 5000
+    },
+    "httpApi": {
+      "baseUrl": "http://localhost:3001",
+      "accessToken": "YOUR_NAPCAT_HTTP_TOKEN",
+      "timeout": 30,
+      "enabled": true
+    }
+  },
+  "opencode": {
+    "host": "127.0.0.1",
+    "port": 4091,
+    "directory": "C:\\",
+    "defaultAgent": "Sisyphus (Ultraworker)",
+    "defaultModel": "alibaba-coding-plan-cn/glm-5",
+    "defaultProvider": "alibaba-coding-plan-cn",
+    "supportedAgents": [
+      "Sisyphus (Ultraworker)",
+      "Prometheus",
+      "Atlas"
+    ],
+    "supportedModels": [
+      "alibaba-coding-plan-cn/glm-5",
+      "alibaba-coding-plan-cn/qwen3.5-plus",
+      "deepseek/deepseek-chat"
+    ]
+  },
+  "whitelist": {
+    "qqUsers": [
+      123456789
+    ],
+    "groups": [
+      123456789
+    ]
+  },
+  "session": {
+    "storageType": "file",
+    "filePath": "data/sessions.json",
+    "maxSessionsPerUser": 100,
+    "isolateByUser": false
+  },
+  "webServer": {
+    "enabled": true,
+    "port": 8080,
+    "ssl": {
+      "enabled": false,
+      "keyPath": "certs/server.key",
+      "certPath": "certs/server.crt",
+      "caPath": "certs/ca.crt"
+    }
+  },
+  "features": {
+    "whitelistFilter": true,
+    "pokeReply": true,
+    "mentionBot": true
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "logs/qq-plugin.log"
+  },
+  "fileHandling": {
+    "downloadDir": "downloads",
+    "autoDownload": true,
+    "maxFileSize": 52428800,
+    "napcatTempDir": ""
+  },
+  "instanceLock": {
+    "enabled": true,
+    "port": 4097
+  }
+}
