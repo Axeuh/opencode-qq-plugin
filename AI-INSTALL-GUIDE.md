@@ -1,28 +1,28 @@
-# OpenCode QQ Plugin - AI Installation Guide
+# OpenCode QQ Plugin - AI 安装指南
 
-This document is designed for AI assistants to help users install and configure the OpenCode QQ Plugin.
-
----
-
-## Overview
-
-OpenCode QQ Plugin integrates QQ messages with OpenCode AI, providing:
-- QQ message handling via NapCat WebSocket
-- Web management interface (port 8080)
-- Custom AI tools (send message, get friends, etc.)
-- Session management and whitelist filtering
+本文档专为 AI 助手设计，用于帮助用户安装和配置 OpenCode QQ Plugin。
 
 ---
 
-## Prerequisites
+## 概述
 
-Before installation, verify these requirements:
+OpenCode QQ Plugin 将 QQ 消息与 OpenCode AI 集成，提供：
+- 通过 NapCat WebSocket 处理 QQ 消息
+- Web 管理界面（端口 8080）
+- 自定义 AI 工具（发送消息、获取好友等）
+- 会话管理和白名单过滤
 
-1. **OpenCode installed** - User must have OpenCode CLI installed
-2. **NapCat running** - NapCat service with WebSocket enabled (default: ws://localhost:3002)
-3. **Node.js 18+** - Required for plugin dependencies
+---
 
-Verify with:
+## 前置要求
+
+安装前，请验证以下条件：
+
+1. **已安装 OpenCode** - 用户必须已安装 OpenCode CLI
+2. **NapCat 正在运行** - NapCat 服务已启用 WebSocket（默认：ws://localhost:3002）
+3. **Node.js 18+** - 插件依赖需要
+
+验证命令：
 ```bash
 opencode --version
 node --version
@@ -30,71 +30,71 @@ node --version
 
 ---
 
-## Installation Steps
+## 安装步骤
 
-### Step 1: Create Plugin Directory
+### 步骤 1：创建插件目录
 
 ```bash
-# Create a directory for the plugin (choose appropriate location)
+# 创建插件目录（选择合适的位置）
 mkdir -p ~/.opencode/plugins/opencode-qq-plugin
 cd ~/.opencode/plugins/opencode-qq-plugin
 ```
 
-### Step 2: Copy Plugin Files
+### 步骤 2：复制插件文件
 
-The plugin requires these files:
-- `dist/` - Compiled JavaScript files
-- `public/` - Web interface files
-- `config.example.json` - Configuration template
+插件需要以下文件：
+- `dist/` - 编译后的 JavaScript 文件
+- `public/` - Web 界面文件
+- `config.example.json` - 配置模板
 
-Either:
-- Copy from existing installation
-- Download from GitHub release
-- Install via npm: `npm install opencode-qq-plugin`
+获取方式：
+- 从现有安装复制
+- 从 GitHub Release 下载
+- 通过 npm 安装：`npm install opencode-qq-plugin`
 
-### Step 3: Create Configuration File
+### 步骤 3：创建配置文件
 
-Copy the template and edit:
+复制模板并编辑：
 ```bash
 cp config.example.json config.json
 ```
 
-### Step 4: Configure Required Fields
+### 步骤 4：配置必要字段
 
-Edit `config.json` with user's specific values:
+编辑 `config.json`，填入用户的具体信息：
 
 ```json
 {
   "bot": {
-    "name": "BotName",
-    "qqId": "BOT_QQ_NUMBER",
-    "adminQq": "ADMIN_QQ_NUMBER"
+    "name": "机器人名称",
+    "qqId": "机器人QQ号",
+    "adminQq": "管理员QQ号"
   },
   "napcat": {
     "websocket": {
       "url": "ws://localhost:3002",
-      "accessToken": "NAPCAT_ACCESS_TOKEN"
+      "accessToken": "NAPCAT访问令牌"
     }
   },
   "whitelist": {
-    "qqUsers": [ALLOWED_QQ_NUMBERS],
-    "groups": [ALLOWED_GROUP_NUMBERS]
+    "qqUsers": [允许使用的QQ号列表],
+    "groups": [允许使用的群号列表]
   }
 }
 ```
 
-**Critical fields to ask user:**
-| Field | Description | Example |
-|-------|-------------|---------|
-| `bot.qqId` | Bot's QQ number | "123456789" |
-| `bot.adminQq` | Admin's QQ number | "987654321" |
-| `napcat.websocket.accessToken` | NapCat access token | "abc123xyz" |
-| `whitelist.qqUsers` | Allowed user QQ numbers | [123456789, 987654321] |
-| `whitelist.groups` | Allowed group numbers | [813729523] |
+**需要向用户询问的关键字段：**
+| 字段 | 说明 | 示例 |
+|------|------|------|
+| `bot.qqId` | 机器人 QQ 号 | "123456789" |
+| `bot.adminQq` | 管理员 QQ 号 | "987654321" |
+| `napcat.websocket.accessToken` | NapCat 访问令牌 | "abc123xyz" |
+| `whitelist.qqUsers` | 允许使用的 QQ 号 | [123456789, 987654321] |
+| `whitelist.groups` | 允许使用的群号 | [813729523] |
 
-### Step 5: Register Plugin with OpenCode
+### 步骤 5：在 OpenCode 中注册插件
 
-Create or edit `.opencode/opencode.json` in the project root:
+在项目根目录创建或编辑 `.opencode/opencode.json`：
 
 ```json
 {
@@ -102,178 +102,178 @@ Create or edit `.opencode/opencode.json` in the project root:
 }
 ```
 
-For global installation:
+全局安装方式：
 ```json
 {
   "plugin": ["~/.opencode/plugins/opencode-qq-plugin"]
 }
 ```
 
-### Step 6: Start OpenCode
+### 步骤 6：启动 OpenCode
 
 ```bash
-# No --port parameter needed
+# 无需 --port 参数
 opencode
 ```
 
 ---
 
-## Verification
+## 验证安装
 
-After starting OpenCode, verify the plugin works:
+启动 OpenCode 后，验证插件是否正常工作：
 
-### 1. Check Web Interface
-- Open browser: http://127.0.0.1:8080
-- Should show login page
+### 1. 检查 Web 界面
+- 打开浏览器访问：http://127.0.0.1:8080
+- 应显示登录页面
 
-### 2. Check Log Server
-- Open browser: http://127.0.0.1:4099
-- Should show log viewer
+### 2. 检查日志服务器
+- 打开浏览器访问：http://127.0.0.1:4099
+- 应显示日志查看器
 
-### 3. Test QQ Message
-- Send a message to the bot QQ
-- Bot should respond if user is in whitelist
+### 3. 测试 QQ 消息
+- 向机器人 QQ 发送消息
+- 如果用户在白名单中，机器人应响应
 
-### 4. Check Plugin Tools
-The plugin provides these AI tools:
-- `qq_send_message` - Send QQ message
-- `qq_get_friends` - Get friend list
-- `qq_search_friend` - Search friend by name
-- `qq_send_file` - Send file to QQ
-- `qq_get_login_info` - Get bot QQ info
-- `qq_send_poke` - Send poke
-- `qq_get_file` - Get file info
-- `qq_get_group_history` - Get group history
-
----
-
-## Configuration Reference
-
-### bot
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| name | string | No | Bot display name |
-| qqId | string | Yes | Bot's QQ number |
-| adminQq | string | No | Admin's QQ number |
-
-### napcat.websocket
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| url | string | Yes | NapCat WebSocket URL |
-| accessToken | string | Yes | Access token |
-| reconnectInterval | number | No | Reconnect interval (ms) |
-
-### whitelist
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| qqUsers | number[] | Yes | Allowed QQ user IDs |
-| groups | number[] | No | Allowed group IDs |
-
-### webServer
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| enabled | boolean | No | Enable web interface |
-| port | number | No | Web server port (default 8080) |
-
-### session.isolateByUser
-| Value | Behavior |
-|-------|----------|
-| true | Each user has isolated sessions |
-| false | Global sessions (default) |
+### 4. 检查插件工具
+插件提供以下 AI 工具：
+- `qq_send_message` - 发送 QQ 消息
+- `qq_get_friends` - 获取好友列表
+- `qq_search_friend` - 按名称搜索好友
+- `qq_send_file` - 发送文件到 QQ
+- `qq_get_login_info` - 获取机器人 QQ 信息
+- `qq_send_poke` - 发送戳一戳
+- `qq_get_file` - 获取文件信息
+- `qq_get_group_history` - 获取群历史消息
 
 ---
 
-## Troubleshooting
+## 配置参考
 
-### Plugin not loading
-1. Check `.opencode/opencode.json` path is correct
-2. Verify `dist/` directory exists
-3. Check OpenCode version >= 0.15.0
+### bot 配置
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| name | string | 否 | 机器人显示名称 |
+| qqId | string | 是 | 机器人 QQ 号 |
+| adminQq | string | 否 | 管理员 QQ 号 |
 
-### Web interface not accessible
-1. Check port 8080 is not in use: `netstat -an | grep 8080`
-2. Verify `webServer.enabled` is true in config
+### napcat.websocket 配置
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| url | string | 是 | NapCat WebSocket URL |
+| accessToken | string | 是 | 访问令牌 |
+| reconnectInterval | number | 否 | 重连间隔（毫秒） |
 
-### QQ messages not received
-1. Verify NapCat WebSocket is running
-2. Check `napcat.websocket.accessToken` matches NapCat config
-3. Ensure user is in `whitelist.qqUsers`
+### whitelist 配置
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| qqUsers | number[] | 是 | 允许的 QQ 用户 ID |
+| groups | number[] | 否 | 允许的群 ID |
 
-### AI cannot send QQ messages
-1. Verify bot is friends with target user (for private messages)
-2. Check bot has permission in group (for group messages)
+### webServer 配置
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| enabled | boolean | 否 | 是否启用 Web 界面 |
+| port | number | 否 | Web 服务器端口（默认 8080） |
+
+### session.isolateByUser 配置
+| 值 | 行为 |
+|------|------|
+| true | 每个用户有独立的会话 |
+| false | 全局会话（默认） |
 
 ---
 
-## File Structure After Installation
+## 故障排除
+
+### 插件未加载
+1. 检查 `.opencode/opencode.json` 路径是否正确
+2. 验证 `dist/` 目录是否存在
+3. 检查 OpenCode 版本 >= 0.15.0
+
+### Web 界面无法访问
+1. 检查端口 8080 是否被占用：`netstat -an | grep 8080`
+2. 验证配置中 `webServer.enabled` 为 true
+
+### 无法接收 QQ 消息
+1. 验证 NapCat WebSocket 是否运行
+2. 检查 `napcat.websocket.accessToken` 是否与 NapCat 配置匹配
+3. 确保用户在 `whitelist.qqUsers` 中
+
+### AI 无法发送 QQ 消息
+1. 验证机器人与目标用户是好友关系（私聊消息）
+2. 检查机器人在群中是否有发言权限（群聊消息）
+
+---
+
+## 安装后的文件结构
 
 ```
 opencode-qq-plugin/
-├── dist/                    # Compiled JS
-│   ├── index.js            # Entry point
+├── dist/                    # 编译后的 JS
+│   ├── index.js            # 入口文件
 │   └── ...
 ├── public/
-│   └── index.html          # Web interface
-├── config.json             # User configuration (create from example)
-├── config.example.json     # Configuration template
-└── data/                   # Runtime data (auto-created)
-    ├── sessions.json       # Session mappings
-    ├── users.json          # Web users
-    └── downloads/          # Downloaded files
+│   └── index.html          # Web 界面
+├── config.json             # 用户配置（从模板创建）
+├── config.example.json     # 配置模板
+└── data/                   # 运行时数据（自动创建）
+    ├── sessions.json       # 会话映射
+    ├── users.json          # Web 用户
+    └── downloads/          # 下载的文件
 ```
 
 ---
 
-## Quick Installation Script
+## 快速安装脚本
 
-For automated installation, run this after copying plugin files:
+复制插件文件后，运行以下脚本：
 
 ```bash
 #!/bin/bash
-# Quick setup script for opencode-qq-plugin
+# opencode-qq-plugin 快速设置脚本
 
 PLUGIN_DIR="${1:-$HOME/.opencode/plugins/opencode-qq-plugin}"
 
-# Create config from example if not exists
+# 从模板创建配置文件
 if [ ! -f "$PLUGIN_DIR/config.json" ]; then
     cp "$PLUGIN_DIR/config.example.json" "$PLUGIN_DIR/config.json"
-    echo "Created config.json - please edit with your values"
+    echo "已创建 config.json - 请编辑填入你的配置"
 fi
 
-# Create data directories
+# 创建数据目录
 mkdir -p "$PLUGIN_DIR/data/downloads"
 mkdir -p "$PLUGIN_DIR/logs"
 
-# Create OpenCode config if not exists
+# 创建 OpenCode 配置
 OPENCODE_CONFIG="$HOME/.opencode/opencode.json"
 if [ ! -f "$OPENCODE_CONFIG" ]; then
     echo '{"plugin": ["~/.opencode/plugins/opencode-qq-plugin"]}' > "$OPENCODE_CONFIG"
-    echo "Created .opencode/opencode.json"
+    echo "已创建 .opencode/opencode.json"
 fi
 
-echo "Setup complete! Edit $PLUGIN_DIR/config.json with your configuration."
+echo "设置完成！请编辑 $PLUGIN_DIR/config.json 填入你的配置。"
 ```
 
 ---
 
-## AI Assistant Checklist
+## AI 助手检查清单
 
-When helping user install this plugin, complete these steps:
+帮助用户安装此插件时，完成以下步骤：
 
-- [ ] Verify OpenCode is installed
-- [ ] Verify NapCat is running
-- [ ] Copy plugin files to target directory
-- [ ] Create `config.json` from `config.example.json`
-- [ ] Ask user for required configuration values
-- [ ] Update `config.json` with user's values
-- [ ] Register plugin in `.opencode/opencode.json`
-- [ ] Start OpenCode and verify web interface
-- [ ] Test with a QQ message
+- [ ] 验证 OpenCode 已安装
+- [ ] 验证 NapCat 正在运行
+- [ ] 复制插件文件到目标目录
+- [ ] 从 `config.example.json` 创建 `config.json`
+- [ ] 向用户询问必要的配置信息
+- [ ] 用用户提供的信息更新 `config.json`
+- [ ] 在 `.opencode/opencode.json` 中注册插件
+- [ ] 启动 OpenCode 并验证 Web 界面
+- [ ] 用 QQ 消息测试
 
 ---
 
-## Contact & Support
+## 联系与支持
 
-- GitHub Issues: https://github.com/your-username/opencode-qq-plugin/issues
-- NapCat Documentation: https://napcat.apifox.cn/
-- OpenCode Documentation: https://opencode.ai/docs
+- GitHub Issues: https://github.com/Axeuh/opencode-qq-plugin/issues
+- NapCat 文档: https://napcat.apifox.cn/
+- OpenCode 文档: https://opencode.ai/docs
