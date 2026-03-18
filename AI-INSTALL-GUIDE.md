@@ -73,7 +73,12 @@ cp config.example.json config.json
   "napcat": {
     "websocket": {
       "url": "ws://localhost:3002",
-      "accessToken": "NAPCAT访问令牌"
+      "accessToken": "WEBSOCKET访问令牌"
+    },
+    "httpApi": {
+      "baseUrl": "http://localhost:3001",
+      "accessToken": "HTTP访问令牌",
+      "enabled": true
     }
   },
   "whitelist": {
@@ -83,12 +88,37 @@ cp config.example.json config.json
 }
 ```
 
+**重要：NapCat 服务配置**
+
+用户需要在 NapCat 中创建两个服务：
+1. **WebSocket 服务器** - 用于接收 QQ 消息（默认端口 3002）
+2. **HTTP API 服务器** - 用于发送消息等操作（默认端口 3001）
+
+在 NapCat 配置文件中添加：
+```json
+{
+  "http": {
+    "enable": true,
+    "host": "0.0.0.0",
+    "port": 3001,
+    "secret": "你的HTTP访问令牌"
+  },
+  "ws": {
+    "enable": true,
+    "host": "0.0.0.0",
+    "port": 3002,
+    "secret": "你的WEBSOCKET访问令牌"
+  }
+}
+```
+
 **需要向用户询问的关键字段：**
 | 字段 | 说明 | 示例 |
 |------|------|------|
 | `bot.qqId` | 机器人 QQ 号 | "123456789" |
 | `bot.adminQq` | 管理员 QQ 号 | "987654321" |
-| `napcat.websocket.accessToken` | NapCat 访问令牌 | "abc123xyz" |
+| `napcat.websocket.accessToken` | NapCat WebSocket 访问令牌 | "abc123xyz" |
+| `napcat.httpApi.accessToken` | NapCat HTTP API 访问令牌 | "def456uvw" |
 | `whitelist.qqUsers` | 允许使用的 QQ 号 | [123456789, 987654321] |
 | `whitelist.groups` | 允许使用的群号 | [813729523] |
 
@@ -160,8 +190,15 @@ opencode
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | url | string | 是 | NapCat WebSocket URL |
-| accessToken | string | 是 | 访问令牌 |
+| accessToken | string | 是 | WebSocket 访问令牌 |
 | reconnectInterval | number | 否 | 重连间隔（毫秒） |
+
+### napcat.httpApi 配置
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| baseUrl | string | 是 | NapCat HTTP API URL |
+| accessToken | string | 是 | HTTP API 访问令牌 |
+| enabled | boolean | 否 | 是否启用 HTTP API（默认 true） |
 
 ### whitelist 配置
 | 字段 | 类型 | 必填 | 说明 |
@@ -195,9 +232,15 @@ opencode
 2. 验证配置中 `webServer.enabled` 为 true
 
 ### 无法接收 QQ 消息
-1. 验证 NapCat WebSocket 是否运行
+1. 验证 NapCat WebSocket 服务是否运行
 2. 检查 `napcat.websocket.accessToken` 是否与 NapCat 配置匹配
 3. 确保用户在 `whitelist.qqUsers` 中
+4. 检查 NapCat 是否正确配置了 WebSocket 服务器
+
+### 无法发送 QQ 消息
+1. 验证 NapCat HTTP API 服务是否运行
+2. 检查 `napcat.httpApi.accessToken` 是否与 NapCat 配置匹配
+3. 确保 `napcat.httpApi.enabled` 为 true
 
 ### AI 无法发送 QQ 消息
 1. 验证机器人与目标用户是好友关系（私聊消息）
