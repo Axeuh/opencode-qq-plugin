@@ -123,34 +123,61 @@ OpenCode 的配置文件位于：
 
 ```bash
 # Windows (PowerShell)
-mkdir -Force "C:\Users\$env:USERNAME\.config\opencode\plugins\opencode-qq-plugin"
-cd "C:\Users\$env:USERNAME\.config\opencode\plugins\opencode-qq-plugin"
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.config\opencode\plugins\opencode-qq-plugin"
 
 # Linux/macOS
 mkdir -p ~/.config/opencode/plugins/opencode-qq-plugin
-cd ~/.config/opencode/plugins/opencode-qq-plugin
 ```
 
-### 步骤 2：复制插件文件
+### 步骤 2：下载插件文件
 
-插件需要以下文件：
-- `dist/` - 编译后的 JavaScript 文件
-- `public/` - Web 界面文件
-- `config.example.json` - 配置模板
+**方式一：从 GitHub Release 下载**
 
-获取方式：
-- 从现有安装复制
-- 从 GitHub Release 下载
-- 通过 npm 安装：`npm install opencode-qq-plugin`
+1. 访问 https://github.com/Axeuh/opencode-qq-plugin/releases
+2. 下载最新版本的 `opencode-qq-plugin.zip`
+3. 解压到插件目录
 
-### 步骤 3：创建配置文件
+**方式二：从现有安装复制**
 
-复制模板并编辑：
+如果已有安装好的插件，直接复制整个目录。
+
+**插件需要的文件**：
+```
+opencode-qq-plugin/
+├── dist/                # 编译后的 JavaScript（必须）
+├── public/              # Web 界面文件（必须）
+├── config.example.json  # 配置模板（可选）
+└── package.json         # 依赖信息（必须）
+```
+
+### 步骤 3：安装依赖
+
+**⚠️ 这一步是必须的！**
+
+进入插件目录并安装依赖：
+
 ```bash
+# Windows
+cd "$env:USERPROFILE\.config\opencode\plugins\opencode-qq-plugin"
+npm install --omit=dev
+
+# Linux/macOS
+cd ~/.config/opencode/plugins/opencode-qq-plugin
+npm install --omit=dev
+```
+
+### 步骤 4：创建配置文件
+
+从模板创建配置文件：
+
+```bash
+# 复制模板
 cp config.example.json config.json
 ```
 
-### 步骤 4：配置必要字段
+或者让 AI 助手直接创建 `config.json`。
+
+### 步骤 5：配置必要字段
 
 编辑 `config.json`，填入用户的具体信息：
 
@@ -219,32 +246,34 @@ cp config.example.json config.json
 | `whitelist.groups` | 允许使用的群号 | [813729523] |
 | `fileHandling.napcatTempDir` | NapCat 临时文件目录 | "\\\\wsl.localhost\\Ubuntu-22.04\\root\\.config\\QQ\\NapCat\\temp" |
 
-### 步骤 5：在 OpenCode 中注册插件
+### 步骤 6：在 OpenCode 中注册插件
 
 **配置文件位置**：
 - **Windows**: `C:\Users\<用户名>\.config\opencode\opencode.json`
 - **Linux/macOS**: `~/.config/opencode/opencode.json`
 
-创建或编辑配置文件：
+在 `opencode.json` 的 `plugin` 数组中添加插件：
 
 ```json
 {
-  "plugin": ["./plugins/opencode-qq-plugin"]
+  "plugin": [
+    "./plugins/opencode-qq-plugin"
+  ]
 }
 ```
 
-**完整路径示例（Windows）**：
-```
-C:\Users\Administrator\.config\opencode\
-├── opencode.json           # OpenCode 主配置
-└── plugins\
-    └── opencode-qq-plugin\ # 插件目录
-        ├── dist\
-        ├── public\
-        └── config.json     # 插件配置
+如果已有其他插件，追加到数组末尾：
+
+```json
+{
+  "plugin": [
+    "oh-my-opencode",
+    "./plugins/opencode-qq-plugin"
+  ]
+}
 ```
 
-### 步骤 6：启动 OpenCode
+### 步骤 7：启动 OpenCode
 
 ```bash
 # 无需 --port 参数
@@ -332,7 +361,13 @@ opencode
    - **Windows**: `C:\Users\<用户名>\.config\opencode\opencode.json`
    - **Linux/macOS**: `~/.config/opencode/opencode.json`
 2. 验证 `dist/` 目录是否存在
-3. 检查 OpenCode 版本 >= 0.15.0
+3. **确保已运行 `npm install --omit=dev` 安装依赖**
+4. 检查 OpenCode 版本 >= 0.15.0
+
+### 服务器没有运行
+1. **检查是否安装了依赖**：运行 `npm install --omit=dev`
+2. 检查 `node_modules/` 目录是否存在
+3. 检查 `package.json` 是否存在
 
 ### Web 界面无法访问
 1. 检查端口 8080 是否被占用：`netstat -an | grep 8080`
@@ -366,6 +401,7 @@ C:\Users\Administrator\.config\opencode\
         ├── dist\                        # 编译后的 JS
         │   ├── index.js                 # 入口文件
         │   └── ...
+        ├── node_modules\                # 依赖（npm install 生成）
         ├── public\
         │   └── index.html               # Web 界面
         ├── config.json                  # 用户配置
@@ -383,69 +419,10 @@ C:\Users\Administrator\.config\opencode\
 └── plugins/
     └── opencode-qq-plugin/              # 插件目录
         ├── dist/
+        ├── node_modules/
         ├── public/
         ├── config.json
         └── data/
-```
-
----
-
-## 快速安装脚本
-
-复制插件文件后，运行以下脚本：
-
-**Windows (PowerShell)**：
-```powershell
-# opencode-qq-plugin 快速设置脚本
-
-$PluginDir = "$env:USERPROFILE\.config\opencode\plugins\opencode-qq-plugin"
-$ConfigDir = "$env:USERPROFILE\.config\opencode"
-
-# 创建目录
-New-Item -ItemType Directory -Force -Path $PluginDir
-New-Item -ItemType Directory -Force -Path "$PluginDir\data\downloads"
-New-Item -ItemType Directory -Force -Path "$PluginDir\logs"
-
-# 从模板创建配置文件
-if (-not (Test-Path "$PluginDir\config.json")) {
-    Copy-Item "$PluginDir\config.example.json" "$PluginDir\config.json"
-    Write-Host "已创建 config.json - 请编辑填入你的配置"
-}
-
-# 创建 OpenCode 配置
-if (-not (Test-Path "$ConfigDir\opencode.json")) {
-    '{"plugin": ["./plugins/opencode-qq-plugin"]}' | Out-File -FilePath "$ConfigDir\opencode.json" -Encoding utf8
-    Write-Host "已创建 opencode.json"
-}
-
-Write-Host "设置完成！请编辑 $PluginDir\config.json 填入你的配置。"
-```
-
-**Linux/macOS (Bash)**：
-```bash
-#!/bin/bash
-# opencode-qq-plugin 快速设置脚本
-
-PLUGIN_DIR="$HOME/.config/opencode/plugins/opencode-qq-plugin"
-CONFIG_DIR="$HOME/.config/opencode"
-
-# 创建目录
-mkdir -p "$PLUGIN_DIR/data/downloads"
-mkdir -p "$PLUGIN_DIR/logs"
-
-# 从模板创建配置文件
-if [ ! -f "$PLUGIN_DIR/config.json" ]; then
-    cp "$PLUGIN_DIR/config.example.json" "$PLUGIN_DIR/config.json"
-    echo "已创建 config.json - 请编辑填入你的配置"
-fi
-
-# 创建 OpenCode 配置
-if [ ! -f "$CONFIG_DIR/opencode.json" ]; then
-    echo '{"plugin": ["./plugins/opencode-qq-plugin"]}' > "$CONFIG_DIR/opencode.json"
-    echo "已创建 opencode.json"
-fi
-
-echo "设置完成！请编辑 $PLUGIN_DIR/config.json 填入你的配置。"
 ```
 
 ---
@@ -460,11 +437,12 @@ echo "设置完成！请编辑 $PLUGIN_DIR/config.json 填入你的配置。"
   - Windows: `C:\Users\<用户名>\.config\opencode\`
   - Linux/macOS: `~/.config/opencode/`
 - [ ] 在正确位置创建插件目录
-- [ ] 复制插件文件到目标目录
-- [ ] 从 `config.example.json` 创建 `config.json`
+- [ ] 下载/复制插件文件到目标目录
+- [ ] **运行 `npm install --omit=dev` 安装依赖**
+- [ ] 创建 `config.json` 配置文件
 - [ ] 向用户询问必要的配置信息
 - [ ] 用用户提供的信息更新 `config.json`
-- [ ] 在正确位置创建 `opencode.json` 注册插件
+- [ ] 在 `opencode.json` 的 `plugin` 数组中添加 `"./plugins/opencode-qq-plugin"`
 - [ ] 启动 OpenCode 并验证 Web 界面
 - [ ] 用 QQ 消息测试
 
@@ -472,6 +450,7 @@ echo "设置完成！请编辑 $PLUGIN_DIR/config.json 填入你的配置。"
 
 ## 联系与支持
 
+- GitHub: https://github.com/Axeuh/opencode-qq-plugin
 - GitHub Issues: https://github.com/Axeuh/opencode-qq-plugin/issues
 - NapCat 文档: https://napcat.apifox.cn/
 - OpenCode 文档: https://opencode.ai/docs
