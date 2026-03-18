@@ -2,6 +2,26 @@
 
 将 QQ 消息与 OpenCode AI 集成的插件，支持 Web 界面，**无需 OpenCode HTTP API**。
 
+---
+
+## AI 辅助安装
+
+如果你是 AI 助手，正在帮助用户安装此插件，请阅读 **[AI-INSTALL-GUIDE.md](./AI-INSTALL-GUIDE.md)** 获取详细的安装配置指南。
+
+该文档包含：
+- 完整的安装步骤
+- 配置项详细说明
+- 常见问题排查
+- AI 助手检查清单
+
+**给 AI 的提示**：
+```
+请阅读 https://github.com/Axeuh/opencode-qq-plugin/blob/main/AI-INSTALL-GUIDE.md
+按照文档中的步骤帮助用户安装和配置 opencode-qq-plugin 插件。
+```
+
+---
+
 ## 核心特性
 
 - **QQ 消息集成**：通过 WebSocket 连接 NapCat 接收 QQ 消息
@@ -306,21 +326,3 @@ npm run build
 ## 许可证
 
 MIT
-
----
-
-## AI 辅助安装
-
-如果你是 AI 助手，正在帮助用户安装此插件，请阅读 **[AI-INSTALL-GUIDE.md](./AI-INSTALL-GUIDE.md)** 获取详细的安装配置指南。
-
-该文档包含：
-- 完整的安装步骤
-- 配置项详细说明
-- 常见问题排查
-- AI 助手检查清单
-
-**给 AI 的提示**：
-```
-请阅读 https://github.com/Axeuh/opencode-qq-plugin/blob/main/AI-INSTALL-GUIDE.md
-按照文档中的步骤帮助用户安装和配置 opencode-qq-plugin 插件。
-```
