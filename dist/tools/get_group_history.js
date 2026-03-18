@@ -14,8 +14,6 @@ export const qqGetGroupHistoryTool = tool({
         const napcat = getNapCatClient();
         try {
             const result = await napcat.getGroupMsgHistory(parseInt(args.groupId), args.count);
-            // 打印原始结果用于调试
-            console.log('[DEBUG] getGroupMsgHistory raw result:', JSON.stringify(result, null, 2));
             // NapCat API 可能返回 { messages: [...] } 或直接返回数组
             let messages = [];
             if (Array.isArray(result)) {

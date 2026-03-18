@@ -16,12 +16,20 @@ export const qqGetGroupHistoryTool: ToolDefinition = tool({
     const napcat = getNapCatClient();
     
     try {
-      const messages = await napcat.getGroupMsgHistory(
+      const result: any = await napcat.getGroupMsgHistory(
         parseInt(args.groupId),
         args.count
       );
       
-      const result = messages.map(m => ({
+      // NapCat API 可能返回 { messages: [...] } 或直接返回数组
+      let messages: any[] = [];
+      if (Array.isArray(result)) {
+        messages = result;
+      } else if (result && Array.isArray(result.messages)) {
+        messages = result.messages;
+      }
+      
+      const formattedMessages = messages.map((m: any) => ({
         time: m.time,
         userId: m.user_id,
         nickname: m.sender?.nickname || '',
@@ -32,8 +40,8 @@ export const qqGetGroupHistoryTool: ToolDefinition = tool({
       return JSON.stringify({
         success: true,
         groupId: args.groupId,
-        count: result.length,
-        messages: result,
+        count: formattedMessages.length,
+        messages: formattedMessages,
       }, null, 2);
     } catch (error: any) {
       return JSON.stringify({
