@@ -1023,7 +1023,19 @@ export function createWebServer(config: WebServerConfig): http.Server | https.Se
     server = http.createServer(app);
   }
   
-  server.listen(port, () => {});
+  server.listen(port, () => {
+    const protocol = ssl?.enabled ? 'https' : 'http';
+    console.log(`[QQ Plugin] Web Server 已启动`);
+    console.log(`[QQ Plugin] 地址: ${protocol}://localhost:${port}`);
+    console.log(`[QQ Plugin] SSL: ${ssl?.enabled ? '已启用' : '未启用'}`);
+  });
+  
+  server.on('error', (err: NodeJS.ErrnoException) => {
+    console.error(`[QQ Plugin] Web Server 启动失败: ${err.message}`);
+    if (err.code === 'EADDRINUSE') {
+      console.error(`[QQ Plugin] 端口 ${port} 已被占用`);
+    }
+  });
   
   return server;
 }

@@ -61,6 +61,9 @@ import { getFileHandler, FileHandler } from './message/file-handler';
 import { processReplyMessage, formatReplyContent } from './message/reply-handler';
 
 // 启动日志服务器并拦截 console
+console.log('========================================');
+console.log('[QQ Plugin] 正在启动日志服务器...');
+console.log('========================================');
 interceptConsole();
 const logServer = createLogServer(4099);
 const apiServer = createApiServer(4098);
@@ -104,10 +107,17 @@ const COMMAND_PREFIX = '/';
 export const QQPlugin: Plugin = async (ctx: PluginInput) => {
   const { project, client, directory, worktree, serverUrl } = ctx;
   
+  console.log('========================================');
+  console.log('[QQ Plugin] 插件正在初始化...');
+  console.log(`[QQ Plugin] 工作目录: ${directory}`);
+  console.log('========================================');
+  
   // 初始化配置
   try {
     initConfig();
+    console.log('[QQ Plugin] 配置加载成功');
   } catch (error: any) {
+    console.error(`[QQ Plugin] 配置加载失败: ${error.message}`);
     return {};
   }
   
@@ -134,9 +144,12 @@ export const QQPlugin: Plugin = async (ctx: PluginInput) => {
   
   // 只有主实例才启动 Web 服务器和 NapCat
   if (isPrimary) {
+    console.log('[QQ Plugin] 主实例已启动');
+    
     // 根据配置决定是否启动 Web 服务器
     const webServerConfig = getWebServerConfig();
     if (webServerConfig.enabled) {
+      console.log('[QQ Plugin] 正在启动 Web 服务器...');
       setWebConfig({
         whitelistUsers: whitelistConfig.qqUsers,
         dataPath: 'data/users.json',
@@ -166,6 +179,7 @@ export const QQPlugin: Plugin = async (ctx: PluginInput) => {
       
       const webServer = createWebServer(webServerConfig);
     } else {
+      console.log('[QQ Plugin] Web 服务器已禁用');
     }
     
     // 设置 API 服务器的客户端引用
@@ -196,14 +210,19 @@ export const QQPlugin: Plugin = async (ctx: PluginInput) => {
     
     // 连接 NapCat（仅主实例）
     const connectNapCat = async () => {
+      console.log('[QQ Plugin] 正在连接 NapCat...');
       try {
         await napcat.connect();
-      } catch (error: any) {}
+        console.log('[QQ Plugin] NapCat 连接成功');
+      } catch (error: any) {
+        console.error(`[QQ Plugin] NapCat 连接失败: ${error.message}`);
+      }
     };
     
     // 启动连接（异步，不阻塞插件初始化）
     connectNapCat();
   } else {
+    console.log('[QQ Plugin] 非主实例，跳过 Web 和 NapCat 启动');
   }
   
   // 处理 QQ 消息

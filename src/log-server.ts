@@ -114,7 +114,7 @@ export function createLogServer(port: number = 4099): http.Server {
 }
 
 /**
- * 重写 console.log (静默模式 - 不输出到 TUI)
+ * 重写 console.log (同时输出到终端和日志缓冲区)
  */
 export function interceptConsole(): void {
   const originalLog = console.log;
@@ -124,19 +124,19 @@ export function interceptConsole(): void {
   console.log = (...args: any[]) => {
     const message = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
     addLog(message);
-    // 不调用 originalLog，静默模式
+    originalLog.apply(console, args);  // 同时输出到终端
   };
   
   console.error = (...args: any[]) => {
     const message = '[ERROR] ' + args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
     addLog(message);
-    // 不调用 originalError，静默模式
+    originalError.apply(console, args);  // 同时输出到终端
   };
   
   console.warn = (...args: any[]) => {
     const message = '[WARN] ' + args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
     addLog(message);
-    // 不调用 originalWarn，静默模式
+    originalWarn.apply(console, args);  // 同时输出到终端
   };
 }
 
