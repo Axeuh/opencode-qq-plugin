@@ -1,6 +1,6 @@
 {
   "name": "opencode-qq-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "OpenCode QQ Robot Plugin - QQ消息与OpenCode AI集成",
   "type": "module",
   "main": "dist/index.js",

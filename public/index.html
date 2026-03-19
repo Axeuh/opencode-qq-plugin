@@ -3237,17 +3237,17 @@ case 'message.updated':
         
         async function loadAgents() {
             try {
-                // 从 OpenCode API 获取智能体列表
-                const response = await fetch('/api/opencode/agents', {
-                    headers: {
-                        'Authorization': `Bearer ${getAuthToken()}`
-                    }
-                });
+                // 从插件 API 获取智能体列表（无需认证）
+                const response = await fetch('/api/agents/list');
                 
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success && Array.isArray(data.agents)) {
                         AppState.agents = data.agents.map(function(agent) {
+                            // agent 可能是字符串或对象
+                            if (typeof agent === 'string') {
+                                return { id: agent, name: agent };
+                            }
                             return {
                                 id: agent.id || agent.name || agent,
                                 name: agent.name || agent.id || agent
