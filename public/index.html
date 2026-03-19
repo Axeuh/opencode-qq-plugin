@@ -3247,10 +3247,12 @@ case 'message.updated':
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success && Array.isArray(data.agents)) {
-                        AppState.agents = data.agents.map((agent: any) => ({
-                            id: agent.id || agent.name || agent,
-                            name: agent.name || agent.id || agent
-                        }));
+                        AppState.agents = data.agents.map(function(agent) {
+                            return {
+                                id: agent.id || agent.name || agent,
+                                name: agent.name || agent.id || agent
+                            };
+                        });
                         console.log('从API加载智能体列表:', AppState.agents.length, '个');
                     } else {
                         // 使用默认列表
