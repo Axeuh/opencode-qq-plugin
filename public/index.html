@@ -3237,15 +3237,47 @@ case 'message.updated':
         
         async function loadAgents() {
             try {
-                // 使用config.yaml中的智能体列表
+                // 从 OpenCode API 获取智能体列表
+                const response = await fetch('/api/opencode/agents', {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && Array.isArray(data.agents)) {
+                        AppState.agents = data.agents.map((agent: any) => ({
+                            id: agent.id || agent.name || agent,
+                            name: agent.name || agent.id || agent
+                        }));
+                        console.log('从API加载智能体列表:', AppState.agents.length, '个');
+                    } else {
+                        // 使用默认列表
+                        AppState.agents = CONFIG_AGENTS.map(name => ({
+                            id: name,
+                            name: name
+                        }));
+                        console.log('使用默认智能体列表:', AppState.agents.length, '个');
+                    }
+                } else {
+                    // 使用默认列表
+                    AppState.agents = CONFIG_AGENTS.map(name => ({
+                        id: name,
+                        name: name
+                    }));
+                    console.log('API请求失败，使用默认智能体列表');
+                }
+                
+                renderAgentSelect();
+            } catch (error) {
+                console.error('加载智能体列表失败:', error);
+                // 使用默认列表
                 AppState.agents = CONFIG_AGENTS.map(name => ({
                     id: name,
                     name: name
                 }));
-                console.log('加载智能体列表:', AppState.agents.length, '个');
                 renderAgentSelect();
-            } catch (error) {
-                console.error('加载智能体列表失败:', error);
             }
         }
 
